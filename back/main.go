@@ -16,10 +16,9 @@ func main() {
 
 	configs.ConnectDB()
 	router.Use(middleware.IsAuthorized)
-	// router.HandleFunc("/restaurant", test)
-	// router.HandleFunc("/restaurant/{id}", test)
 
 	routes.UserRoute(router)
+	routes.RestaurantRoute(router)
 
 	fmt.Printf("Starting server at port 6000\n")
 	if err := http.ListenAndServe(":6000", router); err != nil {

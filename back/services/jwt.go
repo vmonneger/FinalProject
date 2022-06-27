@@ -19,7 +19,7 @@ type Token struct {
 // Return JWT token string
 func CreateToken(id, email string) (map[string]string, error) {
 
-	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), &Token{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Token{
 		ID:    id,
 		Email: email,
 	})
@@ -32,37 +32,3 @@ func CreateToken(id, email string) (map[string]string, error) {
 	m["token"] = tokenString // set response data
 	return m, nil
 }
-
-// // Check if user got token
-// func IsAuthorized(h http.Handler) http.Handler {
-
-// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-// 		// Auth route don't check token
-// 		if strings.Contains(r.URL.Path, "/auth") {
-// 			h.ServeHTTP(w, r)
-// 		} else {
-// 			tokenString := r.Header.Get("Authorization")
-// 			// Decode from the struct
-// 			t := Token{}
-// 			token, err := jwt.ParseWithClaims(tokenString, &t, func(token *jwt.Token) (interface{}, error) {
-// 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-// 					return nil, fmt.Errorf("there was an error in parsing")
-// 				}
-// 				return []byte(configs.EnvJwtSecret()), nil
-// 			})
-
-// 			if err != nil || !token.Valid {
-// 				w.WriteHeader(http.StatusUnauthorized)
-// 				response := responses.UserResponse{
-// 					Status:  http.StatusUnauthorized,
-// 					Message: "error",
-// 					Data:    map[string]interface{}{"data": err.Error()}}
-// 				json.NewEncoder(w).Encode(response)
-// 				return
-// 			} else {
-// 				h.ServeHTTP(w, r)
-// 			}
-// 		}
-// 	})
-// }
