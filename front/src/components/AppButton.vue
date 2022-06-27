@@ -4,6 +4,7 @@ const props = defineProps({
   label: String,
 })
 </script>
+
 <template>
   <q-btn color="primary" :label="props.label" :size="props.size" />
 </template>

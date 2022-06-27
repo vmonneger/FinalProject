@@ -72,7 +72,14 @@ module.exports = configure(function (/* ctx */) {
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
 
-      vitePlugins: [['vite-plugin-eslint']],
+      vitePlugins: [
+        [
+          'vite-plugin-eslint',
+          {
+            /* plugin options */
+          },
+        ],
+      ],
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
