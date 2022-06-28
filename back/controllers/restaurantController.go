@@ -15,9 +15,10 @@ import (
 	"github.com/vmonneger/FinalProject/services"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func RestaurantHandler() http.HandlerFunc {
+func RestaurantPost() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var restaurant models.Restaurant
@@ -48,7 +49,7 @@ func RestaurantHandler() http.HandlerFunc {
 			return
 		}
 
-		//use the validator library to validate required fields
+		// use the validator library to validate required fields
 		if validationErr := validate.Struct(&restaurant); validationErr != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			response := responses.RestaurantResponse{
@@ -60,14 +61,14 @@ func RestaurantHandler() http.HandlerFunc {
 		}
 
 		newRestaurant := models.Restaurant{
-			Name: restaurant.Name,
-			Menu: restaurant.Menu,
+			Name:        restaurant.Name,
+			Description: restaurant.Description,
 		}
 
 		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
-		fmt.Println(userIdConvert)
+
 		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": newRestaurant})
-		fmt.Println(result)
+
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			response := responses.RestaurantResponse{
@@ -81,7 +82,51 @@ func RestaurantHandler() http.HandlerFunc {
 		response := responses.RestaurantResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
-			Data:    map[string]interface{}{"data": newRestaurant}}
+			Data:    map[string]interface{}{"data": newRestaurant, "mongodb": result}}
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func RestaurantGetOne() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var user models.User
+		defer cancel()
+
+		reqToken := r.Header.Get("Authorization")
+		tokenString := strings.Split(reqToken, "Bearer ")[1]
+
+		// Decode from the struct
+		t := services.Token{}
+		token, _ := jwt.ParseWithClaims(tokenString, &t, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("there was an error in parsing")
+			}
+			return []byte(configs.EnvJwtSecret()), nil
+		})
+
+		userId := token.Claims.(*services.Token)
+
+		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
+		project := bson.M{"password": 0, "email": 0}
+		opts := options.FindOne().SetProjection(project)
+
+		err := userCollection.FindOne(ctx, bson.M{"_id": userIdConvert}, opts).Decode(&user)
+
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			response := responses.RestaurantResponse{
+				Status:  http.StatusInternalServerError,
+				Message: "error",
+				Data:    map[string]interface{}{"data": err.Error()}}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+		w.WriteHeader(http.StatusCreated)
+		response := responses.RestaurantResponse{
+			Status:  http.StatusCreated,
+			Message: "success",
+			Data:    map[string]interface{}{"data": user}}
 		json.NewEncoder(w).Encode(response)
 	}
 }

@@ -6,5 +6,6 @@ import (
 )
 
 func RestaurantRoute(router *mux.Router) {
-	router.HandleFunc("/restaurant", controllers.RestaurantHandler()).Methods("POST")
+	router.HandleFunc("/restaurant", controllers.RestaurantPost()).Methods("POST")
+	router.HandleFunc("/restaurant", controllers.RestaurantGetOne()).Methods("GET")
 }
