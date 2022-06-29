@@ -65,6 +65,8 @@ func RestaurantPost() http.HandlerFunc {
 			Description: restaurant.Description,
 		}
 
+		fmt.Println(newRestaurant)
+
 		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
 
 		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": newRestaurant})
@@ -127,6 +129,64 @@ func RestaurantGetOne() http.HandlerFunc {
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    map[string]interface{}{"data": user}}
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func RestaurantMenuPost() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var menu models.Menu
+		defer cancel()
+
+		reqToken := r.Header.Get("Authorization")
+		tokenString := strings.Split(reqToken, "Bearer ")[1]
+
+		// Decode from the struct
+		t := services.Token{}
+		token, _ := jwt.ParseWithClaims(tokenString, &t, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("there was an error in parsing")
+			}
+			return []byte(configs.EnvJwtSecret()), nil
+		})
+
+		userId := token.Claims.(*services.Token)
+
+		// Validate the request body
+		if err := json.NewDecoder(r.Body).Decode(&menu); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			response := responses.UserResponse{
+				Status:  http.StatusBadRequest,
+				Message: "error",
+				Data:    map[string]interface{}{"data": err.Error()}}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		newMenu := models.Menu{
+			Menu: menu.Menu,
+		}
+
+		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
+		fmt.Println(newMenu)
+
+		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": newMenu})
+
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			response := responses.RestaurantResponse{
+				Status:  http.StatusInternalServerError,
+				Message: "error",
+				Data:    map[string]interface{}{"data": err.Error()}}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+		w.WriteHeader(http.StatusCreated)
+		response := responses.RestaurantResponse{
+			Status:  http.StatusCreated,
+			Message: "success",
+			Data:    map[string]interface{}{"data": newMenu, "mongodb": result}}
 		json.NewEncoder(w).Encode(response)
 	}
 }
