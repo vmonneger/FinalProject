@@ -15,6 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -134,6 +135,53 @@ func UserLogin() http.HandlerFunc {
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    map[string]interface{}{"data": jwtToken}}
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func UserGetAll() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var users []models.User
+
+		project := bson.M{"name": 1, "email": 1}
+		opts := options.Find().SetProjection(project)
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		cursor, err := userCollection.Find(ctx, bson.M{}, opts)
+		defer cancel()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		defer cursor.Close(ctx)
+		for cursor.Next(ctx) {
+			var result models.User
+			err := cursor.Decode(&result)
+			if err != nil {
+				log.Fatal(err)
+			}
+			users = append(users, result)
+		}
+		if err := cursor.Err(); err != nil {
+			log.Fatal(err)
+		}
+
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			response := responses.UserResponse{
+				Status:  http.StatusInternalServerError,
+				Message: "error",
+				Data:    map[string]interface{}{"data": err.Error()}}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		response := responses.UserResponse{
+			Status:  http.StatusCreated,
+			Message: "success",
+			Data:    map[string]interface{}{"data": users}}
 		json.NewEncoder(w).Encode(response)
 	}
 }
