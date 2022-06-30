@@ -9,4 +9,5 @@ type User struct {
 	Menu        interface{}        `json:"menu,omitempty" bson:"menu,omitempty"`
 	Name        string             `json:"name,omitempty" validate:"required" bson:"name,omitempty"`
 	Description string             `json:"description,omitempty" validate:"required" bson:"description,omitempty"`
+	Place_id    string             `json:"user_id" bson:"user_id"`
 }

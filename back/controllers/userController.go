@@ -185,3 +185,14 @@ func UserGetAll() http.HandlerFunc {
 		json.NewEncoder(w).Encode(response)
 	}
 }
+
+func UserAddPlace(userId [1]string, placeId string) *mongo.UpdateResult {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	result, err := userCollection.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": userId}}, bson.M{"$set": bson.M{"place_id": placeId}})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result
+}

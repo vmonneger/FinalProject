@@ -7,4 +7,5 @@ import (
 
 func PlaceRoute(router *mux.Router) {
 	router.HandleFunc("/admin/place", controllers.PlacePost()).Methods("POST")
+	router.HandleFunc("/place/{id}", controllers.PlaceGet()).Methods("GET")
 }
