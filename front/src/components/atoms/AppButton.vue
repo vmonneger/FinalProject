@@ -18,7 +18,7 @@ const props = defineProps({
 <template>
   <q-btn :color="props.color" :label="props.label" :size="props.size" no-caps unelevated>
     <template v-slot:loading>
-      <q-spinner-ios />
+      <q-spinner-tail />
     </template>
   </q-btn>
 </template>

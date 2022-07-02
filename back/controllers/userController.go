@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-playground/validator"
 	"github.com/vmonneger/FinalProject/configs"
+	"github.com/vmonneger/FinalProject/middlewares"
 	"github.com/vmonneger/FinalProject/models"
 	"github.com/vmonneger/FinalProject/responses"
 	"github.com/vmonneger/FinalProject/services"
@@ -63,12 +64,7 @@ func UserSignIn() http.HandlerFunc {
 		result, err := userCollection.InsertOne(ctx, newUser)
 
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.UserResponse{
-				Status:  http.StatusInternalServerError,
-				Message: "error",
-				Data:    map[string]interface{}{"data": err.Error()}}
-			json.NewEncoder(w).Encode(response)
+			middlewares.ServerErrResponse(err.Error(), w)
 			return
 		}
 
@@ -94,12 +90,7 @@ func UserLogin() http.HandlerFunc {
 		defer cancel()
 
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.UserResponse{
-				Status:  http.StatusInternalServerError,
-				Message: "error",
-				Data:    map[string]interface{}{"data": err.Error()}}
-			json.NewEncoder(w).Encode(response)
+			middlewares.ServerErrResponse(err.Error(), w)
 			return
 		}
 
@@ -109,24 +100,14 @@ func UserLogin() http.HandlerFunc {
 		passErr := bcrypt.CompareHashAndPassword(dbPass, userPass)
 
 		if passErr != nil {
-			log.Println(passErr)
-			response := responses.UserResponse{
-				Status:  http.StatusInternalServerError,
-				Message: "error",
-				Data:    map[string]interface{}{"data": err.Error()}}
-			json.NewEncoder(w).Encode(response)
+			middlewares.ServerErrResponse(passErr.Error(), w)
 			return
 		}
 
 		jwtToken, err := services.CreateToken(dbUser.Id.Hex(), user.Email)
 
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.UserResponse{
-				Status:  http.StatusInternalServerError,
-				Message: "error",
-				Data:    map[string]interface{}{"data": err.Error()}}
-			json.NewEncoder(w).Encode(response)
+			middlewares.ServerErrResponse(err.Error(), w)
 			return
 		}
 
@@ -168,12 +149,7 @@ func UserGetAll() http.HandlerFunc {
 		}
 
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.UserResponse{
-				Status:  http.StatusInternalServerError,
-				Message: "error",
-				Data:    map[string]interface{}{"data": err.Error()}}
-			json.NewEncoder(w).Encode(response)
+			middlewares.ServerErrResponse(err.Error(), w)
 			return
 		}
 

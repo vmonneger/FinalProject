@@ -7,11 +7,12 @@ import { useRestaurantStore } from 'src/stores/restaurant'
 import { useRouter } from 'vue-router'
 import AppButton from '../atoms/AppButton.vue'
 import AppInput from '../atoms/AppInput.vue'
+import { notificationSaved } from '../../helpers/notifications'
 import { ruleInputRequired, ruleVerifyPassword, ruleEmail } from '../../helpers/rules'
 
 const router = useRouter()
 const restaurantStore = useRestaurantStore()
-console.log(restaurantStore)
+
 const form = reactive({})
 
 const loading = ref(false)
@@ -23,10 +24,11 @@ const loading = ref(false)
 const onSubmit = async () => {
   loading.value = true
   try {
-    await restaurantStore.createRestaurantUser({
+    await restaurantStore.registerRestaurantUser({
       email: form.email,
       password: form.password,
     })
+    notificationSaved()
     loading.value = false
   } catch (e) {
     loading.value = false

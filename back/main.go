@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"github.com/vmonneger/FinalProject/configs"
-	"github.com/vmonneger/FinalProject/middleware"
+	"github.com/vmonneger/FinalProject/middlewares"
 	"github.com/vmonneger/FinalProject/routes"
 )
 
@@ -26,7 +26,7 @@ func main() {
 	router := mux.NewRouter()
 
 	configs.ConnectDB()
-	router.Use(mux.CORSMethodMiddleware(router), middleware.IsAuthorized)
+	router.Use(mux.CORSMethodMiddleware(router), middlewares.IsAuthorized)
 
 	routes.UserRoute(router)
 	routes.RestaurantRoute(router)

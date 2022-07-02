@@ -12,7 +12,7 @@ import AppTitle from '../components/atoms/AppTitle.vue'
         <p class="text-center text-secondary text-bold">
           Créez votre compte pour pouvoir bénéficier de notre solution de commande
         </p>
-        <FormRegister label="S'enregistrer" />
+        <FormRegister />
       </AppCard>
       <div class="row justify-center">
         <router-link style="text-decoration: none" :to="{ name: 'Login' }">
