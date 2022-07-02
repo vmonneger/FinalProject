@@ -12,9 +12,9 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$primary: #5d5d81;
-$secondary: #bfcde0;
-$accent: #fefcfd;
+$primary: #221E22;
+$secondary: #44355B;
+$accent: #31263E;
 
 $dark: #000505;
 
@@ -22,3 +22,9 @@ $positive: #21ba45;
 $negative: #c10015;
 $info: #31ccec;
 $warning: #f2c037;
+
+$main-background: #f4f8fc;
+
+$typography-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+  'Helvetica Neue', sans-serif;
+$body-font-size: 0.9rem;

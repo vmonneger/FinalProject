@@ -27,7 +27,7 @@ var validate = validator.New()
 func UserSignIn() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		var user models.User
+		var user models.UserAccount
 		defer cancel()
 
 		// Validate the request body
@@ -54,7 +54,7 @@ func UserSignIn() http.HandlerFunc {
 
 		hashPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 
-		newUser := models.User{
+		newUser := models.UserAccount{
 			Id:       primitive.NewObjectID(),
 			Email:    user.Email,
 			Password: string(hashPassword),
