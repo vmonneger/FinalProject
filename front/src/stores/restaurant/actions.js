@@ -16,12 +16,12 @@ export const actions = {
     const { email, password } = data
     try {
       const response = await api.post('/auth/login', { email, password })
-      console.log(response)
       if (response.status === 201) {
-        localStorage.setItem('token', response.data.data.data.token)
+        localStorage.setItem('token', response.data.token)
       }
     } catch (e) {
-      console.log(e)
+      notification('Vérifiez votre email ou votre mot de passe', 'error')
+      throw new Error(e)
     }
   },
 }

@@ -27,10 +27,9 @@ const onSubmit = async () => {
       email: form.email,
       password: form.password,
     })
-    loading.value = false
   } catch (e) {
     loading.value = false
-    throw e
+    throw new Error(e)
   }
   loading.value = false
   router.push({ name: 'Login' })

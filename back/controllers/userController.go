@@ -107,7 +107,7 @@ func UserLogin() http.HandlerFunc {
 		passErr := bcrypt.CompareHashAndPassword(dbPass, userPass)
 
 		if passErr != nil {
-			middlewares.ServerErrResponse(passErr.Error(), w)
+			middlewares.UnauthorizedErrResponse("Wrong Password", w)
 			return
 		}
 
@@ -118,11 +118,9 @@ func UserLogin() http.HandlerFunc {
 			return
 		}
 
+		response := map[string]interface{}{"token": jwtToken}
 		w.WriteHeader(http.StatusCreated)
-		response := responses.UserResponse{
-			Status:  http.StatusCreated,
-			Message: "success",
-			Data:    map[string]interface{}{"data": jwtToken}}
+		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
 	}
 }

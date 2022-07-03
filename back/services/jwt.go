@@ -17,18 +17,17 @@ type Token struct {
 // CreateToken : takes userId as parameter,
 // generates JWT token and
 // Return JWT token string
-func CreateToken(id, email string) (map[string]string, error) {
+func CreateToken(id, email string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &Token{
 		ID:    id,
 		Email: email,
 	})
-	// token -> string. Only server knows this secret (foobar).
+
 	tokenString, err := token.SignedString([]byte(configs.EnvJwtSecret()))
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	m := make(map[string]string)
-	m["token"] = tokenString // set response data
-	return m, nil
+
+	return tokenString, nil
 }
