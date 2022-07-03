@@ -24,7 +24,6 @@ func IsAuthorized(h http.Handler) http.Handler {
 			reqToken := r.Header.Get("Authorization")
 			tokenString := strings.Split(reqToken, "Bearer ")[1]
 
-			// Decode from the struct
 			t := services.Token{}
 			token, err := jwt.ParseWithClaims(tokenString, &t, func(token *jwt.Token) (interface{}, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

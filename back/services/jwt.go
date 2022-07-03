@@ -5,9 +5,6 @@ import (
 	"github.com/vmonneger/FinalProject/configs"
 )
 
-// Token ,contains data that will enrypted in JWT token
-// When jwt token will decrypt, token model will returns
-// Need this model to authenticate and validate resources access by loggedIn user
 type Token struct {
 	ID    string `json:"id"`
 	Email string `json:"email"`

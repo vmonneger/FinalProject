@@ -1,4 +1,7 @@
 <script setup>
+/**
+ * @file Page for register restaurant account.
+ */
 import FormRegister from '../components/molecules/FormRegister.vue'
 import AppCard from '../components/atoms/AppCard.vue'
 import AppTitle from '../components/atoms/AppTitle.vue'

@@ -1,4 +1,7 @@
 <script setup>
+/**
+ * @file Page for restaurant login.
+ */
 import FormLogin from '../components/molecules/FormLogin.vue'
 import AppCard from '../components/atoms/AppCard.vue'
 import AppTitle from '../components/atoms/AppTitle.vue'

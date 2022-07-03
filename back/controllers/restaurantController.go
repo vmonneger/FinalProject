@@ -27,7 +27,6 @@ func RestaurantPost() http.HandlerFunc {
 		reqToken := r.Header.Get("Authorization")
 		tokenString := strings.Split(reqToken, "Bearer ")[1]
 
-		// Decode from the struct
 		t := services.Token{}
 		token, _ := jwt.ParseWithClaims(tokenString, &t, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -98,7 +97,6 @@ func RestaurantGetOne() http.HandlerFunc {
 		reqToken := r.Header.Get("Authorization")
 		tokenString := strings.Split(reqToken, "Bearer ")[1]
 
-		// Decode from the struct
 		t := services.Token{}
 		token, _ := jwt.ParseWithClaims(tokenString, &t, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -142,7 +140,6 @@ func RestaurantMenuPost() http.HandlerFunc {
 		reqToken := r.Header.Get("Authorization")
 		tokenString := strings.Split(reqToken, "Bearer ")[1]
 
-		// Decode from the struct
 		t := services.Token{}
 		token, _ := jwt.ParseWithClaims(tokenString, &t, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

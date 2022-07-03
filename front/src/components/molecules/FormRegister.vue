@@ -17,10 +17,6 @@ const form = reactive({})
 
 const loading = ref(false)
 
-/**
- * The submit of the form.
- * Dispatch an action from firebase to create a user in firebase and create a new user in bakend.
- */
 const onSubmit = async () => {
   loading.value = true
   try {

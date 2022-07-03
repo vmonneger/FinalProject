@@ -3,7 +3,6 @@
  * Notifications are small messages that pops on the UI and disapear after several seconds
  * to inform the user that something happened.
  */
-
 import { Notify } from 'quasar'
 
 /**
@@ -11,7 +10,6 @@ import { Notify } from 'quasar'
  *
  * @param {string} message - Message of the notification.
  * @param {string} type - Type of notification: 'error' | 'warning' | 'info' | 'primary'.
- * @returns {void}.
  */
 export const notification = (message, type) => {
   if (type === 'error') {
@@ -48,8 +46,6 @@ export const notification = (message, type) => {
 
 /**
  * Display a notification with the "saved" message.
- *
- * @returns {void}
  */
 export const notificationSaved = () => {
   return Notify.create({

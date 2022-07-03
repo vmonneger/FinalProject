@@ -1,5 +1,5 @@
 /**
- * @file Define the user store.
+ * @file Define the restaurant store.
  */
 
 import { defineStore } from 'pinia'
