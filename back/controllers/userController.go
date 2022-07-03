@@ -53,6 +53,13 @@ func UserSignIn() http.HandlerFunc {
 			return
 		}
 
+		opt := options.Index().SetUnique(true)
+		index := mongo.IndexModel{Keys: bson.M{"email": 1}, Options: opt}
+
+		if _, err := userCollection.Indexes().CreateOne(ctx, index); err != nil {
+			middlewares.ServerErrResponse(err.Error(), w)
+		}
+
 		hashPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 
 		newUser := models.UserAccount{
