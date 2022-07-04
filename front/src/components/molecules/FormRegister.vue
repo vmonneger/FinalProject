@@ -61,7 +61,7 @@ const onSubmit = async () => {
         v-model="form.passwordMatch"
         class="col-12"
         name="password-match"
-        placeholder="Mot de passe"
+        placeholder="Retaper votre mot de passe"
         dense
         :rules="[...ruleInputRequired, ...ruleVerifyPassword(form.password)]"
         lazy-rules

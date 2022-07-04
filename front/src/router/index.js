@@ -27,6 +27,15 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
+  Router.beforeEach((to) => {
+    const publicPages = ['/login', '/register']
+    const authRequired = !publicPages.includes(to.path)
+    const isLogin = localStorage.getItem('token')
+
+    if (authRequired && !isLogin && to.name !== 'Login') {
+      return { name: 'Login' }
+    }
+  })
 
   return Router
 })
