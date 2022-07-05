@@ -2,6 +2,7 @@ import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
 import { notification } from '../helpers/notifications'
+import { useRestaurantStore } from '../stores/restaurant/index'
 
 /*
  * If not building with SSR mode, you can
@@ -28,7 +29,9 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
-  Router.beforeEach((to) => {
+  Router.beforeEach(async (to) => {
+    const storeRestaurant = useRestaurantStore()
+    console.log(storeRestaurant)
     const publicPages = ['/login', '/register']
     const authRequired = !publicPages.includes(to.path)
     const isLogin = localStorage.getItem('token')
@@ -37,7 +40,16 @@ export default route(function (/* { store, ssrContext } */) {
       notification("Vous n'êtes pas connecté", 'warning')
       return { name: 'Login' }
     }
-  })
 
+    if (isLogin && (to.name === 'Login' || to.name === 'Register')) {
+      return { name: 'HomeRestaurant' }
+    }
+
+    if (isLogin) {
+      if (!storeRestaurant.id) {
+        await storeRestaurant.getResataurantInfo()
+      }
+    }
+  })
   return Router
 })

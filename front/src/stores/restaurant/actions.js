@@ -34,6 +34,7 @@ export const actions = {
   async getResataurantInfo() {
     try {
       const response = await api.get('/restaurant')
+      console.log('la response', response)
     } catch (e) {
       throw new Error(e)
     }

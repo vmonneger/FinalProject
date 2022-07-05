@@ -14,8 +14,9 @@ import (
 
 func main() {
 	c := cors.New(cors.Options{
+		AllowedHeaders: []string{"*"},
 		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"POST"},
+		AllowedMethods: []string{http.MethodGet, http.MethodPost},
 	})
 
 	router := mux.NewRouter()
@@ -29,7 +30,7 @@ func main() {
 
 	fmt.Printf("Starting server at port 8000\n")
 
-	if err := http.ListenAndServe(":8000", c.Handler((router))); err != nil {
+	if err := http.ListenAndServe(":8000", c.Handler(router)); err != nil {
 		log.Fatal(err)
 	}
 
