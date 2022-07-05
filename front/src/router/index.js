@@ -1,6 +1,7 @@
 import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
+import { notification } from '../helpers/notifications'
 
 /*
  * If not building with SSR mode, you can
@@ -32,7 +33,8 @@ export default route(function (/* { store, ssrContext } */) {
     const authRequired = !publicPages.includes(to.path)
     const isLogin = localStorage.getItem('token')
 
-    if (authRequired && !isLogin && to.name !== 'Login') {
+    if (authRequired && !isLogin && to.name !== 'Login' && to.name !== 'Register') {
+      notification("Vous n'êtes pas connecté", 'warning')
       return { name: 'Login' }
     }
   })

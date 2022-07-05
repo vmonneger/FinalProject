@@ -12,6 +12,7 @@ export const actions = {
       throw new Error(e)
     }
   },
+
   async loginRestaurantUser(data) {
     const { email, password } = data
     try {
@@ -21,6 +22,15 @@ export const actions = {
       }
     } catch (e) {
       notification('Vérifiez votre email ou votre mot de passe', 'error')
+      throw new Error(e)
+    }
+  },
+
+  async getResataurantInfo() {
+    try {
+      const response = await api.get('/restaurant')
+      console.log(response)
+    } catch (e) {
       throw new Error(e)
     }
   },
