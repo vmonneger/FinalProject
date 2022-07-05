@@ -10,4 +10,5 @@ export const state = () => ({
   name: '',
   description: '',
   menu: {},
+  place_id: '',
 })

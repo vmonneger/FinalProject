@@ -67,7 +67,7 @@ func RestaurantPost() http.HandlerFunc {
 
 		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
 
-		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": newRestaurant})
+		_, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": newRestaurant})
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -83,7 +83,7 @@ func RestaurantPost() http.HandlerFunc {
 		response := responses.RestaurantResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
-			Data:    map[string]interface{}{"data": newRestaurant, "mongodb": result}}
+			Data:    newRestaurant}
 		json.NewEncoder(w).Encode(response)
 	}
 }

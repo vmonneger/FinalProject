@@ -32,8 +32,6 @@ const essentialLinks = [
 
 const storeRestaurant = useRestaurantStore()
 
-const dropdownData = { name: storeRestaurant.getRestaurantName }
-
 const leftDrawerOpen = ref(false)
 
 const toggleLeftDrawer = () => {
@@ -46,10 +44,9 @@ const toggleLeftDrawer = () => {
     <q-header elevated>
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-
         <q-toolbar-title class="text-white"> Orderizi </q-toolbar-title>
 
-        <TheDropdownProfile :dropdownData="dropdownData" />
+        <TheDropdownProfile :dropdownData="{ name: storeRestaurant.getRestaurantName }" />
       </q-toolbar>
     </q-header>
 

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 /**
  * @file Component to display a title.
  */

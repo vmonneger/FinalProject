@@ -48,9 +48,11 @@ export const actions = {
     const { name, description } = data
     try {
       const response = await api.post('/restaurant', { name, description })
+      console.log(response)
       if (response.status === 201) {
         this.$patch((state) => {
-          ;(state.name = response.data.name), (state.description = response.data.description)
+          ;(state.name = response.data.data.name.replace(/\s*$/, '')),
+            (state.description = response.data.data.description.replace(/\s*$/, ''))
         })
       }
     } catch (e) {
