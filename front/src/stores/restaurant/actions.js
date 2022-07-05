@@ -26,10 +26,14 @@ export const actions = {
     }
   },
 
+  async logoutRestaurant() {
+    localStorage.clear()
+    this.router.push({ name: 'Login' })
+  },
+
   async getResataurantInfo() {
     try {
       const response = await api.get('/restaurant')
-      console.log(response)
     } catch (e) {
       throw new Error(e)
     }

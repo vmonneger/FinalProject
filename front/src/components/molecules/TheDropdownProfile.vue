@@ -5,6 +5,10 @@
 import AppItem from '../atoms/AppItem.vue'
 import AppIcon from '../atoms/AppIcon.vue'
 import { computed, ref } from 'vue'
+import { useRestaurantStore } from 'src/stores/restaurant/index'
+
+const storeRestaurant = useRestaurantStore()
+console.log(storeRestaurant)
 
 const props = defineProps({
   dropdownData: {
@@ -27,7 +31,7 @@ const logoutRoute = computed(() => ({
   label: 'Se déconnecter',
   icon: 'fas fa-sign-out-alt',
   click: () => {
-    console.log('tessst')
+    storeRestaurant.logoutRestaurant()
   },
 }))
 </script>
