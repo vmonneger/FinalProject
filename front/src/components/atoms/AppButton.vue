@@ -5,7 +5,7 @@
 const props = defineProps({
   color: {
     type: String,
-    default: 'secondary',
+    default: 'accent',
   },
   size: {
     type: String,

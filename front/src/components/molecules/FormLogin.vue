@@ -28,7 +28,7 @@ const onSubmit = async () => {
     throw new Error(e)
   }
   loading.value = false
-  router.push({ name: 'HomeRestaurant' })
+  router.push({ name: 'RestaurantHome' })
 }
 </script>
 

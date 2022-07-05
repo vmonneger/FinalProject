@@ -28,13 +28,31 @@ export const actions = {
 
   async logoutRestaurant() {
     localStorage.clear()
+    this.$reset()
     this.router.push({ name: 'Login' })
   },
 
-  async getResataurantInfo() {
+  async queryGetResataurantInfo() {
     try {
       const response = await api.get('/restaurant')
-      console.log('la response', response)
+      this.$patch({
+        ...response?.data?.data,
+      })
+    } catch (e) {
+      throw new Error(e)
+    }
+  },
+
+  async queryPostResataurantInfo(data) {
+    console.log(data)
+    const { name, description } = data
+    try {
+      const response = await api.post('/restaurant', { name, description })
+      if (response.status === 201) {
+        this.$patch((state) => {
+          ;(state.name = response.data.name), (state.description = response.data.description)
+        })
+      }
     } catch (e) {
       throw new Error(e)
     }

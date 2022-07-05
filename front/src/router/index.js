@@ -31,7 +31,7 @@ export default route(function (/* { store, ssrContext } */) {
   })
   Router.beforeEach(async (to) => {
     const storeRestaurant = useRestaurantStore()
-    console.log(storeRestaurant)
+
     const publicPages = ['/login', '/register']
     const authRequired = !publicPages.includes(to.path)
     const isLogin = localStorage.getItem('token')
@@ -42,12 +42,12 @@ export default route(function (/* { store, ssrContext } */) {
     }
 
     if (isLogin && (to.name === 'Login' || to.name === 'Register')) {
-      return { name: 'HomeRestaurant' }
+      return { name: 'RestaurantHome' }
     }
 
     if (isLogin) {
       if (!storeRestaurant.id) {
-        await storeRestaurant.getResataurantInfo()
+        await storeRestaurant.queryGetResataurantInfo()
       }
     }
   })

@@ -5,14 +5,27 @@ const routes = [
     children: [
       {
         path: '/home/restaurant',
-        name: 'HomeRestaurant',
+        name: 'RestaurantHome',
         component: () => import('pages/RestaurantHome.vue'),
-        meta: {
-          requiresRestaurantAuth: true,
-        },
+      },
+      {
+        path: '/restaurant/info',
+        name: 'RestaurantInfo',
+        component: () => import('pages/RestaurantInfo.vue'),
+      },
+      {
+        path: '/restaurant/menu',
+        name: 'RestaurantMenu',
+        component: () => import('pages/RestaurantMenu.vue'),
+      },
+      {
+        path: '/restaurant/show',
+        name: 'RestaurantShow',
+        component: () => import('pages/RestaurantShow.vue'),
       },
     ],
   },
+
   {
     path: '/',
     component: () => import('layouts/DefaultLayout.vue'),

@@ -22,7 +22,7 @@ func main() {
 	router := mux.NewRouter()
 
 	configs.ConnectDB()
-	router.Use(mux.CORSMethodMiddleware(router), middlewares.IsAuthorized)
+	router.Use(mux.CORSMethodMiddleware(router), middlewares.IsAuthorized, middlewares.SetHeader)
 
 	routes.UserRoute(router)
 	routes.RestaurantRoute(router)

@@ -25,6 +25,7 @@ func RestaurantPost() http.HandlerFunc {
 		defer cancel()
 
 		reqToken := r.Header.Get("Authorization")
+
 		tokenString := strings.Split(reqToken, "Bearer ")[1]
 
 		t := services.Token{}
@@ -64,8 +65,6 @@ func RestaurantPost() http.HandlerFunc {
 			Description: restaurant.Description,
 		}
 
-		fmt.Println(newRestaurant)
-
 		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
 
 		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": newRestaurant})
@@ -79,6 +78,7 @@ func RestaurantPost() http.HandlerFunc {
 			json.NewEncoder(w).Encode(response)
 			return
 		}
+
 		w.WriteHeader(http.StatusCreated)
 		response := responses.RestaurantResponse{
 			Status:  http.StatusCreated,
@@ -126,7 +126,7 @@ func RestaurantGetOne() http.HandlerFunc {
 		response := responses.RestaurantResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
-			Data:    map[string]interface{}{"data": user}}
+			Data:    user}
 		json.NewEncoder(w).Encode(response)
 	}
 }
@@ -166,7 +166,6 @@ func RestaurantMenuPost() http.HandlerFunc {
 		}
 
 		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
-		fmt.Println(newMenu)
 
 		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": newMenu})
 

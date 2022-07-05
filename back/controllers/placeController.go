@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -71,8 +70,6 @@ func PlacePost() http.HandlerFunc {
 			id, _ := primitive.ObjectIDFromHex(element)
 			convertUsersId = append(convertUsersId, id)
 		}
-
-		fmt.Printf("%+v\n", convertUsersId)
 
 		resultUpdateUsers, err := userCollection.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": convertUsersId}}, bson.M{"$set": bson.M{"place_id": newPlace.Id}})
 

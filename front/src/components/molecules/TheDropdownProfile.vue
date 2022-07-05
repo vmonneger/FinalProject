@@ -8,7 +8,6 @@ import { computed, ref } from 'vue'
 import { useRestaurantStore } from 'src/stores/restaurant/index'
 
 const storeRestaurant = useRestaurantStore()
-console.log(storeRestaurant)
 
 const props = defineProps({
   dropdownData: {
@@ -39,7 +38,7 @@ const logoutRoute = computed(() => ({
 <template>
   <q-btn class="app-dropdown-profile q-px-sm" no-caps flat stretch @click="toggle">
     <div class="items-center no-wrap row q-gutter-sm">
-      <div class="gt-xs">{{ props.dropdownData?.name }}</div>
+      <div class="gt-xs text-white">{{ props.dropdownData?.name }}</div>
       <AppIcon name="fa-solid fa-angle-down" :class="{ 'is-open': isOpen }" class="text-white" color="white" />
     </div>
     <q-menu @hide="toggleHideMenu">
