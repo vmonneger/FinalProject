@@ -28,7 +28,6 @@ const addCategoryMenu = () => {
 }
 
 const onSubmit = async () => {
-  console.log('ca passe')
   loading.value = true
   try {
     await storeRestaurant.queryPostResataurantMenu({
