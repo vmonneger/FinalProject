@@ -28,3 +28,13 @@ func EnvJwtSecret() string {
 
 	return os.Getenv("JWT_SECRET")
 }
+
+func EnvServerPort() string {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	return os.Getenv("SERVER_PORT")
+}

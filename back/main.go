@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -28,9 +27,7 @@ func main() {
 	routes.RestaurantRoute(router)
 	routes.PlaceRoute(router)
 
-	fmt.Printf("Starting server at port 8000\n")
-
-	if err := http.ListenAndServe(":8000", c.Handler(router)); err != nil {
+	if err := http.ListenAndServe(configs.EnvServerPort(), c.Handler(router)); err != nil {
 		log.Fatal(err)
 	}
 
