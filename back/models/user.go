@@ -7,6 +7,7 @@ type User struct {
 	Email       string             `json:"email,omitempty" validate:"required" bson:"email,omitempty"`
 	Password    string             `json:"password,omitempty" validate:"required" bson:"password,omitempty"`
 	Menu        interface{}        `json:"menu,omitempty" bson:"menu,omitempty"`
+	Category    []string           `json:"category,omitempty" bson:"category,omitempty"`
 	Name        string             `json:"name,omitempty" validate:"required" bson:"name,omitempty"`
 	Description string             `json:"description,omitempty" validate:"required" bson:"description,omitempty"`
 	Place_id    string             `json:"place_id" bson:"place_id"`

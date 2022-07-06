@@ -2,4 +2,12 @@ export const getters = {
   getRestaurantName(state) {
     return state.name
   },
+
+  getRestaurantCategory(state) {
+    const categoryParse = state.category.map((category) => ({
+      category: category,
+    }))
+    console.log(categoryParse)
+    return categoryParse
+  },
 }

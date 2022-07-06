@@ -44,15 +44,30 @@ export const actions = {
   },
 
   async queryPostResataurantInfo(data) {
-    console.log(data)
     const { name, description } = data
     try {
       const response = await api.post('/restaurant', { name, description })
-      console.log(response)
       if (response.status === 201) {
         this.$patch((state) => {
           ;(state.name = response.data.data.name.replace(/\s*$/, '')),
             (state.description = response.data.data.description.replace(/\s*$/, ''))
+        })
+      }
+    } catch (e) {
+      throw new Error(e)
+    }
+  },
+
+  async queryPostResataurantMenu(data) {
+    let categories = []
+    for (let i = 0; i < data.categoriesMenu.value.length; i++) {
+      categories.push(data.categoriesMenu.value[i].category)
+    }
+    try {
+      const response = await api.post('/restaurant/category', { category: categories })
+      if (response.status === 201) {
+        this.$patch((state) => {
+          state.category = response.data.data.category
         })
       }
     } catch (e) {
