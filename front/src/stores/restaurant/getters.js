@@ -7,7 +7,10 @@ export const getters = {
     const categoryParse = state.category.map((category) => ({
       category: category,
     }))
-    console.log(categoryParse)
     return categoryParse
+  },
+
+  getRestaurantMenu(state) {
+    return state.menu
   },
 }

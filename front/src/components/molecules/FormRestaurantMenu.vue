@@ -3,35 +3,44 @@
  * @file Component for Social Network Link.
  */
 import { ref } from 'vue'
-import { ruleInputRequired } from '../../helpers/rules'
 import AppIcon from '../atoms/AppIcon.vue'
 import AppInput from '../atoms/AppInput.vue'
 import AppButton from '../atoms/AppButton.vue'
 import { useRestaurantStore } from '../../stores/restaurant'
 import { notificationSaved } from '../../helpers/notifications'
+import { ruleInputRequired, ruleSpecialCharactersLight } from '../../helpers/rules'
+
+const props = defineProps({
+  dataMenu: {
+    type: Array,
+    default: () => [],
+  },
+  category: {
+    type: String,
+    default: '',
+  },
+})
 
 const storeRestaurant = useRestaurantStore()
-const loading = ref(false)
-const categoriesMenu = ref(storeRestaurant.getRestaurantCategory)
 
-const removeCategoryMenu = (index) => {
-  categoriesMenu.value.splice(index, 1)
+const loading = ref(false)
+
+const menuItems = ref(props.dataMenu)
+
+const removeMenuItem = (index) => {
+  menuItems.value.splice(index, 1)
 }
 
-const addCategoryMenu = () => {
-  categoriesMenu.value = [
-    ...(categoriesMenu.value || []),
-    {
-      category: '',
-    },
-  ]
+const addMenuItem = () => {
+  menuItems.value = [...(menuItems.value || []), { category: props.category }]
 }
 
 const onSubmit = async () => {
   loading.value = true
+  console.log(menuItems.value)
   try {
-    await storeRestaurant.queryPostResataurantCategory({
-      categoriesMenu,
+    await storeRestaurant.queryPostResataurantMenu({
+      menuItems,
     })
   } catch (e) {
     loading.value = false
@@ -46,25 +55,33 @@ const onSubmit = async () => {
   <div class="row col-12 q-col-gutter-md">
     <q-form class="col-12" @submit.prevent.stop @validation-success="onSubmit">
       <div class="row col-12 items-center q-col-gutter-lg">
-        <div class="row col-12 items-center" v-for="(categoryMenu, index) in categoriesMenu" :key="index">
-          <div class="col-grow">
+        <div class="row justify-center col-12" v-for="(menuItem, index) in menuItems" :key="index">
+          <div class="col-8">
             <AppInput
-              v-model="categoryMenu.category"
-              name="socialNetworkUrl"
-              dense
-              placeholder="Ex: Boissons, Desserts, Entrées, Apéritifs..."
+              v-model="menuItem.title"
+              name="title"
+              placeholder="Titre"
               :rules="ruleInputRequired"
-              class="no-padding"
+              dense
               lazy-rules
+            />
+            <AppInput
+              v-model="menuItem.description"
+              :rules="[...ruleSpecialCharactersLight]"
+              lazy-rules
+              name="description"
+              dense
+              type="textarea"
+              placeholder="Description"
             />
           </div>
           <div class="col-auto">
-            <AppIcon name="fa-regular fa-trash-can" color="negative" hover-effect @click="removeCategoryMenu(index)" />
+            <AppIcon name="fa-regular fa-trash-can" color="negative" hover-effect @click="removeMenuItem(index)" />
           </div>
         </div>
       </div>
       <div class="row justify-between col-12 q-gutter-y-sm q-mt-md">
-        <AppButton color="primary" @click="addCategoryMenu" label="Ajouter une catégorie" />
+        <AppButton color="primary" @click="addMenuItem" label="Ajouter à la carte" />
         <AppButton color="accent" type="submit" label="Enregister" />
       </div>
     </q-form>

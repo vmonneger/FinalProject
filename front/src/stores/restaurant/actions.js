@@ -58,13 +58,13 @@ export const actions = {
     }
   },
 
-  async queryPostResataurantMenu(data) {
+  async queryPostResataurantCategory(data) {
     let categories = []
     for (let i = 0; i < data.categoriesMenu.value.length; i++) {
       categories.push(data.categoriesMenu.value[i].category)
     }
     try {
-      const response = await api.post('/restaurant/category', { category: categories })
+      const response = await api.post('/restaurant/category', { name: categories })
       if (response.status === 201) {
         this.$patch((state) => {
           state.category = response.data.data.category
@@ -74,4 +74,44 @@ export const actions = {
       throw new Error(e)
     }
   },
+
+  async queryPostResataurantMenu(data) {
+    const { menuItems } = data
+
+    const storeMenuFilter = this.menu.filter((menu) => menu.category !== menuItems.value[0].category)
+
+    const newMenu = [...menuItems.value, ...(storeMenuFilter || [])]
+
+    try {
+      const response = await api.post('/restaurant/menu', { menu: newMenu })
+      if (response.status === 201) {
+        console.log(response)
+        this.$patch((state) => {
+          state.menu = response.data.data.menu
+        })
+      }
+    } catch (e) {
+      throw new Error(e)
+    }
+  },
+
+  // async queryDeleteResataurantCategory(data) {
+  //   const { menuItems } = data
+
+  //   const storeMenuFilter = this.menu.filter((menu) => menu.category !== menuItems.value[0].category)
+
+  //   const newMenu = [...menuItems.value, ...(storeMenuFilter || [])]
+
+  //   try {
+  //     const response = await api.post('/restaurant/menu', { menu: newMenu })
+  //     if (response.status === 201) {
+  //       console.log(response)
+  //       this.$patch((state) => {
+  //         state.menu = response.data.data.menu
+  //       })
+  //     }
+  //   } catch (e) {
+  //     throw new Error(e)
+  //   }
+  // },
 }

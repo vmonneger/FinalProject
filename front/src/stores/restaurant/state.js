@@ -10,6 +10,6 @@ export const state = () => ({
   name: '',
   description: '',
   category: [],
-  menu: {},
+  menu: [],
   place_id: '',
 })
