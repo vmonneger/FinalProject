@@ -35,6 +35,7 @@ export const actions = {
   async queryGetResataurantInfo() {
     try {
       const response = await api.get('/restaurant')
+      console.log('get', response)
       this.$patch({
         ...response?.data?.data,
       })
@@ -66,8 +67,22 @@ export const actions = {
     try {
       const response = await api.post('/restaurant/category', { name: categories })
       if (response.status === 201) {
+        console.log(response)
         this.$patch((state) => {
-          state.category = response.data.data.category
+          state.category = response.data.data
+        })
+      }
+    } catch (e) {
+      throw new Error(e)
+    }
+  },
+
+  async queryDeleteResataurantCategory(data) {
+    try {
+      const response = await api.delete('/restaurant/category', { data: { name: [data] } })
+      if (response.status === 201) {
+        this.$patch((state) => {
+          state.category = state.category.filter((category) => category !== data)
         })
       }
     } catch (e) {
@@ -77,10 +92,14 @@ export const actions = {
 
   async queryPostResataurantMenu(data) {
     const { menuItems } = data
+    console.log(this.menu)
+    let storeMenuFilter = []
+    if (this.menu.menu) {
+      storeMenuFilter = this.menu.menu.filter((menu) => menu.category !== menuItems.value[0].category)
+    }
 
-    const storeMenuFilter = this.menu.filter((menu) => menu.category !== menuItems.value[0].category)
-
-    const newMenu = [...menuItems.value, ...(storeMenuFilter || [])]
+    const newMenu = [...menuItems.value, ...storeMenuFilter]
+    console.log(newMenu)
 
     try {
       const response = await api.post('/restaurant/menu', { menu: newMenu })
@@ -95,23 +114,20 @@ export const actions = {
     }
   },
 
-  // async queryDeleteResataurantCategory(data) {
-  //   const { menuItems } = data
-
-  //   const storeMenuFilter = this.menu.filter((menu) => menu.category !== menuItems.value[0].category)
-
-  //   const newMenu = [...menuItems.value, ...(storeMenuFilter || [])]
-
-  //   try {
-  //     const response = await api.post('/restaurant/menu', { menu: newMenu })
-  //     if (response.status === 201) {
-  //       console.log(response)
-  //       this.$patch((state) => {
-  //         state.menu = response.data.data.menu
-  //       })
-  //     }
-  //   } catch (e) {
-  //     throw new Error(e)
-  //   }
-  // },
+  async queryDeleteResataurantMenu(data) {
+    console.log(data)
+    try {
+      const response = await api.delete('/restaurant/menu', {
+        data: { category: data.category, description: data.description, title: data.title },
+      })
+      if (response.status === 201) {
+        console.log(response)
+        this.$patch((state) => {
+          state.menu = state.menu.filter((category) => category !== data)
+        })
+      }
+    } catch (e) {
+      throw new Error(e)
+    }
+  },
 }

@@ -11,6 +11,6 @@ export const getters = {
   },
 
   getRestaurantMenu(state) {
-    return state.menu
+    return state.menu.menu ? state.menu.menu : []
   },
 }

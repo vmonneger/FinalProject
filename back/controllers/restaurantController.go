@@ -161,11 +161,9 @@ func RestaurantMenuPost() http.HandlerFunc {
 			return
 		}
 
-		newMenu := models.Menu{Menu: menu.Menu}
-
 		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
 
-		_, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": newMenu})
+		_, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.D{primitive.E{Key: "$addToSet", Value: bson.D{primitive.E{Key: "menu", Value: bson.D{primitive.E{Key: "$each", Value: menu.Menu}}}}}})
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -180,7 +178,7 @@ func RestaurantMenuPost() http.HandlerFunc {
 		response := responses.RestaurantResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
-			Data:    newMenu}
+			Data:    menu.Menu}
 		json.NewEncoder(w).Encode(response)
 	}
 }
@@ -217,17 +215,15 @@ func RestaurantCategoryPost() http.HandlerFunc {
 
 		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
 
-		for _, element := range category.Name {
-			_, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": bson.M{element: []string{}}})
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				response := responses.RestaurantResponse{
-					Status:  http.StatusInternalServerError,
-					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}}
-				json.NewEncoder(w).Encode(response)
-				return
-			}
+		_, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": bson.M{"category": category.Name}})
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			response := responses.RestaurantResponse{
+				Status:  http.StatusInternalServerError,
+				Message: "error",
+				Data:    map[string]interface{}{"data": err.Error()}}
+			json.NewEncoder(w).Encode(response)
+			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
@@ -239,11 +235,12 @@ func RestaurantCategoryPost() http.HandlerFunc {
 	}
 }
 
-func RestaurantDeleteCategory() http.HandlerFunc {
+func RestaurantDeleteMenu() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
-		var category models.DeleteField
+		var menuItem models.MenuItem
+
 		defer cancel()
 
 		reqToken := r.Header.Get("Authorization")
@@ -257,11 +254,78 @@ func RestaurantDeleteCategory() http.HandlerFunc {
 			return []byte(configs.EnvJwtSecret()), nil
 		})
 
+		if err := json.NewDecoder(r.Body).Decode(&menuItem); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			response := responses.UserResponse{
+				Status:  http.StatusBadRequest,
+				Message: "error",
+				Data:    map[string]interface{}{"data": err.Error()}}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
 		userId := token.Claims.(*services.Token)
 
 		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
 
-		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$unset": bson.M{category.Name: ""}})
+		fmt.Println(menuItem)
+
+		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$pull": bson.M{"menu": bson.M{"titre": menuItem.Title, "description": menuItem.Description, "category": menuItem.Category}}})
+
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			response := responses.RestaurantResponse{
+				Status:  http.StatusInternalServerError,
+				Message: "error",
+				Data:    map[string]interface{}{"data": err.Error()}}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+		w.WriteHeader(http.StatusCreated)
+		response := responses.RestaurantResponse{
+			Status:  http.StatusCreated,
+			Message: "success",
+			Data:    result}
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func RestaurantDeleteCategory() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+		var category models.Category
+		defer cancel()
+
+		reqToken := r.Header.Get("Authorization")
+		tokenString := strings.Split(reqToken, "Bearer ")[1]
+
+		t := services.Token{}
+		token, _ := jwt.ParseWithClaims(tokenString, &t, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("there was an error in parsing")
+			}
+			return []byte(configs.EnvJwtSecret()), nil
+		})
+
+		if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			response := responses.UserResponse{
+				Status:  http.StatusBadRequest,
+				Message: "error",
+				Data:    map[string]interface{}{"data": err.Error()}}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		fmt.Println("tesssst")
+
+		userId := token.Claims.(*services.Token)
+		fmt.Println(category)
+
+		userIdConvert, _ := primitive.ObjectIDFromHex(userId.ID)
+
+		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$pull": bson.M{"category": bson.M{"$in": category.Name}}})
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

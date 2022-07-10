@@ -16,7 +16,9 @@ const formData = ref()
 const tab = ref()
 
 watchEffect(() => {
-  formData.value = storeRestaurant.getRestaurantMenu.filter((el) => el.category === tab.value)
+  const menu = storeRestaurant.getRestaurantMenu
+  console.log(menu)
+  formData.value = menu.filter((el) => el.category === tab.value)
 })
 </script>
 

@@ -9,6 +9,7 @@ func RestaurantRoute(router *mux.Router) {
 	router.HandleFunc("/restaurant", controllers.RestaurantPost()).Methods("POST")
 	router.HandleFunc("/restaurant", controllers.RestaurantGetOne()).Methods("GET")
 	router.HandleFunc("/restaurant/menu", controllers.RestaurantMenuPost()).Methods("POST")
+	router.HandleFunc("/restaurant/menu", controllers.RestaurantDeleteMenu()).Methods("DELETE")
 	router.HandleFunc("/restaurant/category", controllers.RestaurantCategoryPost()).Methods("POST")
 	router.HandleFunc("/restaurant/category", controllers.RestaurantDeleteCategory()).Methods("DELETE")
 }

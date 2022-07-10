@@ -1,7 +1,11 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson"
-
 type Menu struct {
-	Menu []bson.M `json:"menu,omitempty" validate:"required" bson:"menu,omitempty"`
+	Menu []interface{} `json:"menu,omitempty" validate:"required" bson:"menu,omitempty"`
+}
+
+type MenuItem struct {
+	Description string `json:"description" bson:"description"`
+	Title       string `json:"title" bson:"title"`
+	Category    string `json:"category" bson:"category"`
 }

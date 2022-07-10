@@ -27,7 +27,13 @@ const loading = ref(false)
 
 const menuItems = ref(props.dataMenu)
 
-const removeMenuItem = (index) => {
+const removeMenuItem = async (index, title, description, category) => {
+  const menuItem = {
+    title,
+    description,
+    category,
+  }
+  await storeRestaurant.queryDeleteResataurantMenu(menuItem)
   menuItems.value.splice(index, 1)
 }
 
@@ -76,7 +82,12 @@ const onSubmit = async () => {
             />
           </div>
           <div class="col-auto">
-            <AppIcon name="fa-regular fa-trash-can" color="negative" hover-effect @click="removeMenuItem(index)" />
+            <AppIcon
+              name="fa-regular fa-trash-can"
+              color="negative"
+              hover-effect
+              @click="removeMenuItem(index, menuItem.title, menuItem.description, menuItem.category)"
+            />
           </div>
         </div>
       </div>

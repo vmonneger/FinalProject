@@ -14,8 +14,10 @@ const storeRestaurant = useRestaurantStore()
 const loading = ref(false)
 const categoriesMenu = ref(storeRestaurant.getRestaurantCategory)
 
-const removeCategoryMenu = (index) => {
+const removeCategoryMenu = async (index, category) => {
+  await storeRestaurant.queryDeleteResataurantCategory(category)
   categoriesMenu.value.splice(index, 1)
+  notificationSaved()
 }
 
 const addCategoryMenu = () => {
@@ -59,7 +61,12 @@ const onSubmit = async () => {
             />
           </div>
           <div class="col-auto">
-            <AppIcon name="fa-regular fa-trash-can" color="negative" hover-effect @click="removeCategoryMenu(index)" />
+            <AppIcon
+              name="fa-regular fa-trash-can"
+              color="negative"
+              hover-effect
+              @click="removeCategoryMenu(index, categoryMenu.category)"
+            />
           </div>
         </div>
       </div>
