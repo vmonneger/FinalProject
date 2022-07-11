@@ -11,8 +11,7 @@ type Token struct {
 	jwt.StandardClaims
 }
 
-// CreateToken : takes userId as parameter,
-// generates JWT token and
+// CreateToken : takes userId and email as parameter, generates JWT token.
 // Return JWT token string
 func CreateToken(id, email string) (string, error) {
 

@@ -1,7 +1,7 @@
 package responses
 
 // Response api
-type RestaurantResponse struct {
+type RequestResponse struct {
 	Status  int         `json:"status"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`

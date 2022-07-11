@@ -1,5 +1,7 @@
 package controllers
 
+// This controller manage all about user. Like register, login, admin...
+
 import (
 	"context"
 	"encoding/json"
@@ -9,7 +11,6 @@ import (
 
 	"github.com/go-playground/validator"
 	"github.com/vmonneger/FinalProject/configs"
-	"github.com/vmonneger/FinalProject/middlewares"
 	"github.com/vmonneger/FinalProject/models"
 	"github.com/vmonneger/FinalProject/responses"
 	"github.com/vmonneger/FinalProject/services"
@@ -25,6 +26,7 @@ var userCollection *mongo.Collection = configs.GetCollection(configs.DB, "users"
 // Validator to check require fields
 var validate = validator.New()
 
+// User signin.
 func UserSignIn() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -34,7 +36,7 @@ func UserSignIn() http.HandlerFunc {
 		// Validate the request body
 		if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			response := responses.UserResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusBadRequest,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -45,7 +47,7 @@ func UserSignIn() http.HandlerFunc {
 		//use the validator library to validate required fields
 		if validationErr := validate.Struct(&user); validationErr != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			response := responses.UserResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusBadRequest,
 				Message: "error",
 				Data:    map[string]interface{}{"data": validationErr.Error()}}
@@ -57,7 +59,7 @@ func UserSignIn() http.HandlerFunc {
 		index := mongo.IndexModel{Keys: bson.M{"email": 1}, Options: opt}
 
 		if _, err := userCollection.Indexes().CreateOne(ctx, index); err != nil {
-			middlewares.ServerErrResponse(err.Error(), w)
+			services.ServerErrResponse(err.Error(), w)
 		}
 
 		hashPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
@@ -71,12 +73,12 @@ func UserSignIn() http.HandlerFunc {
 		result, err := userCollection.InsertOne(ctx, newUser)
 
 		if err != nil {
-			middlewares.ServerErrResponse(err.Error(), w)
+			services.ServerErrResponse(err.Error(), w)
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		response := responses.UserResponse{
+		response := responses.RequestResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    map[string]interface{}{"data": result}}
@@ -84,6 +86,7 @@ func UserSignIn() http.HandlerFunc {
 	}
 }
 
+// User login.
 func UserLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -97,7 +100,7 @@ func UserLogin() http.HandlerFunc {
 		defer cancel()
 
 		if err != nil {
-			middlewares.ServerErrResponse(err.Error(), w)
+			services.ServerErrResponse(err.Error(), w)
 			return
 		}
 
@@ -107,14 +110,14 @@ func UserLogin() http.HandlerFunc {
 		passErr := bcrypt.CompareHashAndPassword(dbPass, userPass)
 
 		if passErr != nil {
-			middlewares.UnauthorizedErrResponse("Wrong Password", w)
+			services.UnauthorizedErrResponse("Wrong Password", w)
 			return
 		}
 
 		jwtToken, err := services.CreateToken(dbUser.Id.Hex(), user.Email)
 
 		if err != nil {
-			middlewares.ServerErrResponse(err.Error(), w)
+			services.ServerErrResponse(err.Error(), w)
 			return
 		}
 
@@ -125,6 +128,7 @@ func UserLogin() http.HandlerFunc {
 	}
 }
 
+// Get all users.
 func UserGetAll() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -154,12 +158,12 @@ func UserGetAll() http.HandlerFunc {
 		}
 
 		if err != nil {
-			middlewares.ServerErrResponse(err.Error(), w)
+			services.ServerErrResponse(err.Error(), w)
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		response := responses.UserResponse{
+		response := responses.RequestResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    map[string]interface{}{"data": users}}
@@ -167,6 +171,7 @@ func UserGetAll() http.HandlerFunc {
 	}
 }
 
+// Create a reference in the DB to link restaurant to a place.
 func UserAddPlace(userId [1]string, placeId string) *mongo.UpdateResult {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

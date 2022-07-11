@@ -1,4 +1,7 @@
 <script setup>
+/**
+ * @file Component tab panel for restaurant menu.
+ */
 import { ref, watchEffect } from 'vue'
 import FormRestaurantMenu from './FormRestaurantMenu.vue'
 import { useRestaurantStore } from '../../stores/restaurant'
@@ -17,7 +20,6 @@ const tab = ref()
 
 watchEffect(() => {
   const menu = storeRestaurant.getRestaurantMenu
-  console.log(menu)
   formData.value = menu.filter((el) => el.category === tab.value)
 })
 </script>

@@ -1,10 +1,11 @@
 <script setup>
+/**
+ * @file Page for restaurant menu.
+ */
 import FormRestaurantCategory from '../components/molecules/FormRestaurantCategory.vue'
-import FormRestaurantMenu from '../components/molecules/FormRestaurantMenu.vue'
 import AppCard from '../components/atoms/AppCard.vue'
 import AppTitle from '../components/atoms/AppTitle.vue'
 import TabPanelRestaurantMenu from '../components/molecules/TabPanelRestaurantMenu.vue'
-import { ref } from 'vue'
 import { useRestaurantStore } from '../stores/restaurant'
 
 const storeRestaurant = useRestaurantStore()
@@ -23,29 +24,6 @@ const storeRestaurant = useRestaurantStore()
       <AppCard class="bg-secondary">
         <AppTitle class="q-pb-lg"> Compléter votre carte </AppTitle>
         <TabPanelRestaurantMenu :tabName="storeRestaurant.category"> </TabPanelRestaurantMenu>
-        <!-- <q-tabs
-          v-model="tab"
-          dense
-          class="text-grey"
-          active-color="primary"
-          indicator-color="primary"
-          align="justify"
-          narrow-indicator
-        >
-          <template v-for="(category, index) in storeRestaurant.category" :key="index">
-            <q-tab :name="category" :label="category" />
-          </template>
-        </q-tabs>
-
-        <q-separator />
-
-        <q-tab-panels v-model="tab" animated class="bg-secondary">
-          <template v-for="(category, index) in storeRestaurant.category" :key="index">
-            <q-tab-panel :name="category">
-              <FormRestaurantMenu />
-            </q-tab-panel>
-          </template>
-        </q-tab-panels> -->
       </AppCard>
     </div>
   </div>

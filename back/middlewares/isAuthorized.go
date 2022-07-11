@@ -34,7 +34,7 @@ func IsAuthorized(h http.Handler) http.Handler {
 
 			if err != nil || !token.Valid {
 				w.WriteHeader(http.StatusUnauthorized)
-				response := responses.UserResponse{
+				response := responses.RequestResponse{
 					Status:  http.StatusUnauthorized,
 					Message: "error",
 					Data:    map[string]interface{}{"data": err.Error()}}

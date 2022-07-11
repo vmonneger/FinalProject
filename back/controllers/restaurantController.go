@@ -1,5 +1,7 @@
 package controllers
 
+// This controller manage all request about restaurant.
+
 import (
 	"context"
 	"encoding/json"
@@ -18,6 +20,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Post essential restaurant info. Like Name, description...
 func RestaurantPost() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -41,7 +44,7 @@ func RestaurantPost() http.HandlerFunc {
 		// Validate the request body
 		if err := json.NewDecoder(r.Body).Decode(&restaurant); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusBadRequest,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -52,7 +55,7 @@ func RestaurantPost() http.HandlerFunc {
 		// use the validator library to validate required fields
 		if validationErr := validate.Struct(&restaurant); validationErr != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusBadRequest,
 				Message: "error",
 				Data:    map[string]interface{}{"data": validationErr.Error()}}
@@ -71,7 +74,7 @@ func RestaurantPost() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusInternalServerError,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -80,7 +83,7 @@ func RestaurantPost() http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		response := responses.RestaurantResponse{
+		response := responses.RequestResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    newRestaurant}
@@ -88,6 +91,7 @@ func RestaurantPost() http.HandlerFunc {
 	}
 }
 
+// Get data of the restaurant.
 func RestaurantGetOne() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -115,7 +119,7 @@ func RestaurantGetOne() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusInternalServerError,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -123,7 +127,7 @@ func RestaurantGetOne() http.HandlerFunc {
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
-		response := responses.RestaurantResponse{
+		response := responses.RequestResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    user}
@@ -131,6 +135,7 @@ func RestaurantGetOne() http.HandlerFunc {
 	}
 }
 
+// Post menu of the restaurant.
 func RestaurantMenuPost() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -153,7 +158,7 @@ func RestaurantMenuPost() http.HandlerFunc {
 		// Validate the request body
 		if err := json.NewDecoder(r.Body).Decode(&menu); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			response := responses.UserResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusBadRequest,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -167,7 +172,7 @@ func RestaurantMenuPost() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusInternalServerError,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -175,7 +180,7 @@ func RestaurantMenuPost() http.HandlerFunc {
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
-		response := responses.RestaurantResponse{
+		response := responses.RequestResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    menu.Menu}
@@ -183,6 +188,7 @@ func RestaurantMenuPost() http.HandlerFunc {
 	}
 }
 
+// Post menu category of the restaurant.
 func RestaurantCategoryPost() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -205,7 +211,7 @@ func RestaurantCategoryPost() http.HandlerFunc {
 		// Validate the request body
 		if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			response := responses.UserResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusBadRequest,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -218,7 +224,7 @@ func RestaurantCategoryPost() http.HandlerFunc {
 		_, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$set": bson.M{"category": category.Name}})
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusInternalServerError,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -227,7 +233,7 @@ func RestaurantCategoryPost() http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		response := responses.RestaurantResponse{
+		response := responses.RequestResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    category.Name}
@@ -235,6 +241,7 @@ func RestaurantCategoryPost() http.HandlerFunc {
 	}
 }
 
+// Delete menu restaurant.
 func RestaurantDeleteMenu() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -256,7 +263,7 @@ func RestaurantDeleteMenu() http.HandlerFunc {
 
 		if err := json.NewDecoder(r.Body).Decode(&menuItem); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			response := responses.UserResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusBadRequest,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -270,11 +277,11 @@ func RestaurantDeleteMenu() http.HandlerFunc {
 
 		fmt.Println(menuItem)
 
-		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$pull": bson.M{"menu": bson.M{"titre": menuItem.Title, "description": menuItem.Description, "category": menuItem.Category}}})
+		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": userIdConvert}, bson.M{"$pull": bson.M{"menu": bson.M{"title": menuItem.Title, "description": menuItem.Description, "category": menuItem.Category}}})
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusInternalServerError,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -282,7 +289,7 @@ func RestaurantDeleteMenu() http.HandlerFunc {
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
-		response := responses.RestaurantResponse{
+		response := responses.RequestResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    result}
@@ -290,6 +297,7 @@ func RestaurantDeleteMenu() http.HandlerFunc {
 	}
 }
 
+// Delete menu category.
 func RestaurantDeleteCategory() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -310,7 +318,7 @@ func RestaurantDeleteCategory() http.HandlerFunc {
 
 		if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			response := responses.UserResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusBadRequest,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -329,7 +337,7 @@ func RestaurantDeleteCategory() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusInternalServerError,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -337,7 +345,7 @@ func RestaurantDeleteCategory() http.HandlerFunc {
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
-		response := responses.RestaurantResponse{
+		response := responses.RequestResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    result}

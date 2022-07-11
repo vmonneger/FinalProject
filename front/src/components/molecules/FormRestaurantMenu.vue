@@ -1,6 +1,6 @@
 <script setup>
 /**
- * @file Component for Social Network Link.
+ * @file Form for restaurant menu.
  */
 import { ref } from 'vue'
 import AppIcon from '../atoms/AppIcon.vue'
@@ -35,6 +35,7 @@ const removeMenuItem = async (index, title, description, category) => {
   }
   await storeRestaurant.queryDeleteResataurantMenu(menuItem)
   menuItems.value.splice(index, 1)
+  notificationSaved()
 }
 
 const addMenuItem = () => {
@@ -43,7 +44,7 @@ const addMenuItem = () => {
 
 const onSubmit = async () => {
   loading.value = true
-  console.log(menuItems.value)
+
   try {
     await storeRestaurant.queryPostResataurantMenu({
       menuItems,
@@ -79,6 +80,17 @@ const onSubmit = async () => {
               dense
               type="textarea"
               placeholder="Description"
+            />
+            <AppInput
+              v-model="menuItem.price"
+              :rules="[...ruleSpecialCharactersLight]"
+              lazy-rules
+              name="prix"
+              dense
+              type="number"
+              suffix="€"
+              style="max-width: 100px"
+              placeholder="Prix"
             />
           </div>
           <div class="col-auto">

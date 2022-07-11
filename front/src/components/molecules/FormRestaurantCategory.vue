@@ -1,6 +1,6 @@
 <script setup>
 /**
- * @file Component for Social Network Link.
+ * @file Form for restaurant category.
  */
 import { ref } from 'vue'
 import { ruleInputRequired } from '../../helpers/rules'

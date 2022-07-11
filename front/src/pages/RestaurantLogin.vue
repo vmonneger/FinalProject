@@ -11,7 +11,7 @@ import AppTitle from '../components/atoms/AppTitle.vue'
   <div class="row col-6 justify-center items-center window-height">
     <div class="q-pa-md">
       <AppCard class="">
-        <AppTitle class="text-center q-pb-lg">Example</AppTitle>
+        <AppTitle class="text-center q-pb-lg">Connectez vous à votre compte</AppTitle>
         <FormLogin />
       </AppCard>
       <div class="row justify-center">

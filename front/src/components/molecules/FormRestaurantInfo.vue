@@ -1,4 +1,7 @@
 <script setup>
+/**
+ * @file Form for restaurant info.
+ */
 import AppButton from '../atoms/AppButton.vue'
 import AppInput from '../atoms/AppInput.vue'
 import { ref, reactive } from 'vue'

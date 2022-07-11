@@ -47,7 +47,7 @@ export default route(function (/* { store, ssrContext } */) {
 
     if (isLogin) {
       if (!storeRestaurant.id) {
-        await storeRestaurant.queryGetResataurantInfo()
+        await storeRestaurant.queryGetRestaurantInfo()
       }
     }
   })

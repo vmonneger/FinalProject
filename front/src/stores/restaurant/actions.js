@@ -19,6 +19,7 @@ export const actions = {
       const response = await api.post('/auth/login', { email, password })
       if (response.status === 201) {
         localStorage.setItem('token', response.data.token)
+        api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
       }
     } catch (e) {
       notification('Vérifiez votre email ou votre mot de passe', 'error')
@@ -32,10 +33,9 @@ export const actions = {
     this.router.push({ name: 'Login' })
   },
 
-  async queryGetResataurantInfo() {
+  async queryGetRestaurantInfo() {
     try {
       const response = await api.get('/restaurant')
-      console.log('get', response)
       this.$patch({
         ...response?.data?.data,
       })
@@ -67,7 +67,6 @@ export const actions = {
     try {
       const response = await api.post('/restaurant/category', { name: categories })
       if (response.status === 201) {
-        console.log(response)
         this.$patch((state) => {
           state.category = response.data.data
         })
@@ -92,21 +91,28 @@ export const actions = {
 
   async queryPostResataurantMenu(data) {
     const { menuItems } = data
-    console.log(this.menu)
     let storeMenuFilter = []
-    if (this.menu.menu) {
-      storeMenuFilter = this.menu.menu.filter((menu) => menu.category !== menuItems.value[0].category)
+    if (this.menu?.menu) {
+      storeMenuFilter = [...this.menu.menu]
     }
 
-    const newMenu = [...menuItems.value, ...storeMenuFilter]
-    console.log(newMenu)
+    // A comparer used to determine if two entries are equal.
+    const isSameMenuItem = (a, b) => a.title === b.title && a.category === b.category
+
+    // Get items that only occur in the left array,
+    // using the compareFunction to determine equality.
+    const onlyInLeft = (left, right, compareFunction) =>
+      left.filter((leftValue) => !right.some((rightValue) => compareFunction(leftValue, rightValue)))
+
+    const onlyInA = onlyInLeft(menuItems.value, storeMenuFilter, isSameMenuItem)
+
+    const result = [...onlyInA]
 
     try {
-      const response = await api.post('/restaurant/menu', { menu: newMenu })
+      const response = await api.post('/restaurant/menu', { menu: result })
       if (response.status === 201) {
-        console.log(response)
         this.$patch((state) => {
-          state.menu = response.data.data.menu
+          state.menu.menu = [...response.data.data]
         })
       }
     } catch (e) {
@@ -115,16 +121,21 @@ export const actions = {
   },
 
   async queryDeleteResataurantMenu(data) {
-    console.log(data)
     try {
       const response = await api.delete('/restaurant/menu', {
         data: { category: data.category, description: data.description, title: data.title },
       })
       if (response.status === 201) {
-        console.log(response)
-        this.$patch((state) => {
-          state.menu = state.menu.filter((category) => category !== data)
-        })
+        if (response.data.ModifiedCount > 0) {
+          this.$patch((state) => {
+            state.menu.menu = state.menu.menu.filter(
+              (menuItem) =>
+                menuItem.title !== data.title &&
+                menuItem.description !== data.description &&
+                menuItem.category !== data.category
+            )
+          })
+        }
       }
     } catch (e) {
       throw new Error(e)

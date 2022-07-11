@@ -3,7 +3,6 @@
  * @file Page for restaurant home.
  */
 import AppTitle from 'src/components/atoms/AppTitle.vue'
-import AppIcon from 'src/components/atoms/AppIcon.vue'
 </script>
 
 <template>

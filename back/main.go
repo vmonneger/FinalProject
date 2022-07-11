@@ -9,6 +9,7 @@ import (
 	"github.com/vmonneger/FinalProject/configs"
 	"github.com/vmonneger/FinalProject/middlewares"
 	"github.com/vmonneger/FinalProject/routes"
+	"github.com/vmonneger/FinalProject/services"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	router := mux.NewRouter()
 
 	configs.ConnectDB()
-	router.Use(mux.CORSMethodMiddleware(router), middlewares.IsAuthorized, middlewares.SetHeader)
+	router.Use(mux.CORSMethodMiddleware(router), middlewares.IsAuthorized, services.SetHeader)
 
 	routes.UserRoute(router)
 	routes.RestaurantRoute(router)

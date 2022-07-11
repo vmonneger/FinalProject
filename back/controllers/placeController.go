@@ -1,5 +1,8 @@
 package controllers
 
+// This controller manage the place of restaurants.
+// It create a place with restaurants and can get all the restaurants of the place.
+
 import (
 	"context"
 	"encoding/json"
@@ -19,6 +22,8 @@ import (
 
 var placeCollection *mongo.Collection = configs.GetCollection(configs.DB, "places")
 
+// Create a new document in place collection.
+// It take id of each user restaurant and put them in a document.
 func PlacePost() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -28,7 +33,7 @@ func PlacePost() http.HandlerFunc {
 		// Validate the request body
 		if err := json.NewDecoder(r.Body).Decode(&place); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusBadRequest,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -39,7 +44,7 @@ func PlacePost() http.HandlerFunc {
 		// use the validator library to validate required fields
 		if validationErr := validate.Struct(&place); validationErr != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusBadRequest,
 				Message: "error",
 				Data:    map[string]interface{}{"data": validationErr.Error()}}
@@ -57,7 +62,7 @@ func PlacePost() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusInternalServerError,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -75,7 +80,7 @@ func PlacePost() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusInternalServerError,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -84,7 +89,7 @@ func PlacePost() http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		response := responses.RestaurantResponse{
+		response := responses.RequestResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    map[string]interface{}{"dataPlace": newPlace, "dataUserPlace": resultUpdateUsers, "mongodb": result}}
@@ -92,6 +97,7 @@ func PlacePost() http.HandlerFunc {
 	}
 }
 
+// Get all restaurants of the place.
 func PlaceGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -106,7 +112,7 @@ func PlaceGet() http.HandlerFunc {
 		cursor, err := userCollection.Find(ctx, bson.M{"place_id": id}, opts)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.RestaurantResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusInternalServerError,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -131,7 +137,7 @@ func PlaceGet() http.HandlerFunc {
 
 		if errPlace != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			response := responses.UserResponse{
+			response := responses.RequestResponse{
 				Status:  http.StatusInternalServerError,
 				Message: "error",
 				Data:    map[string]interface{}{"data": err.Error()}}
@@ -140,7 +146,7 @@ func PlaceGet() http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		response := responses.RestaurantResponse{
+		response := responses.RequestResponse{
 			Status:  http.StatusCreated,
 			Message: "success",
 			Data:    map[string]interface{}{"dataRestaurant": users, "dataPlace": place}}
